@@ -6,6 +6,7 @@
 // @charset       UTF-8
 // @author        Gomita, Alice0775 since 2018/09/26
 // @compatibility  Firefox 156
+// @version        2026/08/31 fix bug "Restore All Tabs"
 // @version        2026/08/22 22:00 Bug 1837253 - Introduce read-only index property as a replacement for pseudo-private _tPos
 // @version        2026/08/22 Use getLangTags instead ofgetDetectedLanguages due to Bug 1840857
 // @version        2026/05/25 fix bug
@@ -255,7 +256,7 @@ var ucjsMouseGestures = {
         ['', '右側のタブをすべて閉じる', function(){ gBrowser.removeTabsToTheEndFrom(gBrowser.selectedTab); } ],
         ['', '他のタブをすべて閉じる', function(){ gBrowser.removeAllTabsBut(gBrowser.selectedTab); } ],
         ['DRU', '閉じたタブを元に戻す', function(){ document.getElementById("History:UndoCloseTab").doCommand(); } ],
-        /*['DRU', '閉じたタブを元に戻す(一個ずつ)', function(){undoCloseTab(0); } ],*/
+        /*['DRU', '閉じたタブを元に戻す(一個ずつ)', function(){SessionWindowUI.undoCloseTab(0); } ],*/
         ['', '閉じたタブのリストをポップアップ', function(){ ucjsMouseGestures_helper.closedTabsPopup(); } ],
         ['', 'すべてのタブを閉じる', function(){ var browser = gBrowser; var ctab = browser.addTrustedTab(BROWSER_NEW_TAB_URL, {skipAnimation: true,}); browser.removeAllTabsBut(ctab); } ],
         ['', 'ウインドウを閉じる', function(){ document.getElementById("cmd_closeWindow").doCommand(); } ],
@@ -1722,10 +1723,7 @@ let ucjsMouseGestures_helper = {
       m.setAttribute("label", "Restore All Tabs");
       //m.setAttribute("class", "menuitem-iconic bookmark-item");
       m.setAttribute("accesskey", "R" /*strings.getString("menuRestoreAllTabs.accesskey")*/);
-      m.addEventListener("command", function() {
-        for (let i = 0; i < undoItems.length; i++)
-          undoCloseTab();
-      }, false);
+      m.addEventListener("command", (event) => RecentlyClosedTabsAndWindowsMenuUtils.onRestoreAllTabsCommand(event), false);
 
       undoPopup.appendChild(document.createXULElement("menuseparator"));
 
@@ -1752,7 +1750,6 @@ let ucjsMouseGestures_helper = {
         m.setAttribute("class", "menuitem-iconic bookmark-item");
         m.setAttribute("value", i);
         m.addEventListener("command", () => {SessionWindowUI.undoCloseTab(window, i)});
-        //m.setAttribute("oncommand", "undoCloseTab(" + i + ");");
         /*m.setAttribute("onclick", "ucjsMouseGestures_helper._undoCloseMiddleClick(event);");*/
         if (i == 0)
           m.setAttribute("key", "key_restoreLastClosedTabOrWindowOrSession");
@@ -1779,7 +1776,7 @@ let ucjsMouseGestures_helper = {
     if (aEvent.button != 1)
       return;
 
-    undoCloseTab(aEvent.originalTarget.value);
+    SessionWindowUI.undoCloseTab(aEvent.originalTarget.value);
     gBrowser.moveTabToEnd();
     if (!aEvent.ctrlKey)
       aEvent.target.parentNode.hidePopup();

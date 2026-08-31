@@ -5,9 +5,8 @@
 // @include       main
 // @charset       UTF-8
 // @author        Gomita, Alice0775 since 2018/09/26
-// @compatibility  Firefox 154
+// @compatibility  Firefox 153
 // @version        2026/08/31 fix bug "Restore All Tabs"
-// @version        2026/08/22 Use getLangTags instead ofgetDetectedLanguages due to Bug 1840857
 // @version        2026/05/25 fix bug
 // @version        2026/05/16 Due to the fix for bug 2034851, 05/06 is no longer needed, so reverted it.
 // @version        2026/05/06 To prevent the loss of selection caused by bug 2032191, skip the following two lines if a selection exists
@@ -385,7 +384,7 @@ var ucjsMouseGestures = {
                 gBrowser.selectedBrowser
               );
               if (!actor.languageState.hasVisibleChange) {
-                const detectedLang = await actor.getLangTags();
+                const detectedLang = await actor.getDetectedLanguages();
                 if (!detectedLang) {
                   throw new Error("Expected to have a document language tag.");
                 }
@@ -402,7 +401,7 @@ var ucjsMouseGestures = {
                   false // reportAsAutoTranslate
                 );
               } else {
-                const { docLangTag } = await actor.getLangTags();
+                const { docLangTag } = await actor.getDetectedLanguages();
                 if (!docLangTag) {
                   throw new Error("Expected to have a document language tag.");
                 }
@@ -1749,6 +1748,7 @@ let ucjsMouseGestures_helper = {
         m.setAttribute("class", "menuitem-iconic bookmark-item");
         m.setAttribute("value", i);
         m.addEventListener("command", () => {SessionWindowUI.undoCloseTab(window, i)});
+        //m.setAttribute("oncommand", "undoCloseTab(" + i + ");");
         /*m.setAttribute("onclick", "ucjsMouseGestures_helper._undoCloseMiddleClick(event);");*/
         if (i == 0)
           m.setAttribute("key", "key_restoreLastClosedTabOrWindowOrSession");
