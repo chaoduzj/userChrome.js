@@ -4,6 +4,7 @@
 // @description   do not select tab when dragging it, 非アクティブをドラッグ開始した際,そのタブが前面になるのを阻止する。
 // @include       main
 // @async          true
+// @version        2026/09/02 Since it wasn't working properly, decided not to do anything
 // @compatibility Firefox 154
 // @version        2026/08/18 11:00 Change due to Bug 2039847: Add events for tab interactions
 // @version        2026/01/30 fix bug.
