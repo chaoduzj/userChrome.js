@@ -147,13 +147,13 @@ let do_not_select_tab_when_mousedown = {
 // We should only start the redirection if the browser window has finished
 // starting up. Otherwise, we should wait until the startup is done.
 if (gBrowserInit.delayedStartupFinished) {
-  do_not_select_tab_when_mousedown.init();
+  //do_not_select_tab_when_mousedown.init();
 } else {
   let delayedStartupFinished = (subject, topic) => {
     if (topic == "browser-delayed-startup-finished" &&
         subject == window) {
       Services.obs.removeObserver(delayedStartupFinished, topic);
-      do_not_select_tab_when_mousedown.init();
+      //do_not_select_tab_when_mousedown.init();
     }
   };
   Services.obs.addObserver(delayedStartupFinished,
