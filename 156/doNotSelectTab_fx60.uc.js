@@ -4,10 +4,8 @@
 // @description   do not select tab when dragging it, 非アクティブをドラッグ開始した際,そのタブが前面になるのを阻止する。
 // @include       main
 // @async          true
-// @compatibility Firefox 156
-// @version        2026/09/02 Since it wasn't working properly, decided not to do anything
-// @version        2026/08/18 11:05 
-// @version        2026/08/18 11:00 Change due to Bug 2039847: Add events for tab interactions
+// @compatibility Firefox 154
+// @version        2026/08/18 Change due to Bug 2039847: Add events for tab interactions
 // @version        2026/01/30 fix bug.
 // @version        2026/01/30 fix non-selected tab.
 // @version        2025/09/19 fix an issue where slightly dragging a loaded, non-selected tab would cause it to be discarded.
@@ -156,13 +154,13 @@ let do_not_select_tab_when_mousedown = {
 // We should only start the redirection if the browser window has finished
 // starting up. Otherwise, we should wait until the startup is done.
 if (gBrowserInit.delayedStartupFinished) {
-  //do_not_select_tab_when_mousedown.init();
+  do_not_select_tab_when_mousedown.init();
 } else {
   let delayedStartupFinished = (subject, topic) => {
     if (topic == "browser-delayed-startup-finished" &&
         subject == window) {
       Services.obs.removeObserver(delayedStartupFinished, topic);
-      //do_not_select_tab_when_mousedown.init();
+      do_not_select_tab_when_mousedown.init();
     }
   };
   Services.obs.addObserver(delayedStartupFinished,

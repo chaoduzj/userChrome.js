@@ -4,9 +4,8 @@
 // @description   do not select tab when dragging it, 非アクティブをドラッグ開始した際,そのタブが前面になるのを阻止する。
 // @include       main
 // @async          true
-// @version        2026/09/02 Since it wasn't working properly, decided not to do anything
 // @compatibility Firefox 154
-// @version        2026/08/18 11:00 Change due to Bug 2039847: Add events for tab interactions
+// @version        2026/08/18 Change due to Bug 2039847: Add events for tab interactions
 // @version        2026/01/30 fix bug.
 // @version        2026/01/30 fix non-selected tab.
 // @version        2025/09/19 fix an issue where slightly dragging a loaded, non-selected tab would cause it to be discarded.
@@ -30,13 +29,15 @@ let do_not_select_tab_when_mousedown = {
   init: function() {
     gBrowser.tabContainer.addEventListener("mousedown", this, true);
     window.addEventListener("unload", this. false);
-    gBrowser.explicitUnloadTabs2 = function explicitUnloadTabs2(aTab, discarded){
-      gBrowser.explicitUnloadTabs([aTab]);
+    /*
+    gBrowser.explicitUnloadTabs2 = async function explicitUnloadTabs2(aTab, discarded){
+      await gBrowser.explicitUnloadTabs([aTab]);
       if (!discarded)
         aTab.removeAttribute("discarded");
       else
         aTab.setAttribute("discarded", "");
     }
+    */
   },
 
   uninit() {
@@ -47,20 +48,24 @@ let do_not_select_tab_when_mousedown = {
   onselect: function(event) {
     if (event.target == gBrowser.tabpanels) {
       console.log("cancel select");
-      //event.stopPropagation(); 
+      event.stopPropagation(); 
       let that = do_not_select_tab_when_mousedown;
       console.log(that._mousedownTab);
       gBrowser.selectedTab = that._selectedTab;
-      if (that._pending || that._discarded)
-        gBrowser.explicitUnloadTabs2(that._mousedownTab, that._pending || that._discarded);
+      /*
+      if (that._mousedownTab._pending || that._mousedownTab._discarded)
+        gBrowser.explicitUnloadTabs2(that._mousedownTab, that._discarded);
+      */
     }
   },
 
   _mousedownTab : null,
   _mousedownTimer: null,
   _selectedTab: null,
+  /*
   _pending: null,
   _discarded: null,
+  */
   
   handleEvent(event) {
     let tab, selectedTab;
@@ -90,8 +95,10 @@ let do_not_select_tab_when_mousedown = {
           break;
         this._selectedTab = gBrowser.selectedTab;
         this._mousedownTab = tab;
-        this._pending = tab.getAttribute("pending");
-        this._discarded = tab.getAttribute("discarded");
+        /*
+        this._pending = tab.hasAttribute("pending");
+        this._discarded = tab.hasAttribute("discarded");
+        */
         // xxx should investigate side effects due to event.stopPropagation when mousedown
         event.stopPropagation(); 
         tab.addEventListener("dragstart", this, true);
@@ -147,13 +154,13 @@ let do_not_select_tab_when_mousedown = {
 // We should only start the redirection if the browser window has finished
 // starting up. Otherwise, we should wait until the startup is done.
 if (gBrowserInit.delayedStartupFinished) {
-  //do_not_select_tab_when_mousedown.init();
+  do_not_select_tab_when_mousedown.init();
 } else {
   let delayedStartupFinished = (subject, topic) => {
     if (topic == "browser-delayed-startup-finished" &&
         subject == window) {
       Services.obs.removeObserver(delayedStartupFinished, topic);
-      //do_not_select_tab_when_mousedown.init();
+      do_not_select_tab_when_mousedown.init();
     }
   };
   Services.obs.addObserver(delayedStartupFinished,
