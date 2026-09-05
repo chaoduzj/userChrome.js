@@ -5,6 +5,7 @@
 // @include      main
 // @async          true
 // @compatibility  Firefox 149
+// @version        2026/09/06 00:00 fix old
 // @version        2026/04/02 12:00 Remove deactivation for new search widget
 // @version        2026/01/13 00:00 compatibility 149 from 148
 // @version      2025/12/20 00:00 0,1 only works when new search widget is enabled
@@ -52,32 +53,26 @@ const sort_Result_SearchBar_History = {
     } else {
       Services.prefs.clearUserPref('browser.formfill.agedWeight');
       Services.prefs.clearUserPref('browser.formfill.boundaryWeight');
-      Services.prefs.clearUserPref('browser.formfill.bucketSize');
-      Services.prefs.clearUserPref('browser.formfill.maxTimeGroupings');
-      Services.prefs.clearUserPref('browser.formfill.timeGroupingSize');
       switch(this.SORT_ORDER) {
         case 1:
-          Services.prefs.setIntPref('browser.formfill.agedWeight', 0);
-          Services.prefs.setIntPref('browser.formfill.boundaryWeight', 0);
           Services.prefs.setIntPref('browser.formfill.bucketSize', -1);
           Services.prefs.setIntPref('browser.formfill.maxTimeGroupings', -1);
           Services.prefs.setIntPref('browser.formfill.timeGroupingSize', -1);
           break;
         case 2:
-          Services.prefs.setIntPref('browser.formfill.agedWeight', 0);
-          Services.prefs.setIntPref('browser.formfill.boundaryWeight', 0);
           Services.prefs.setIntPref('browser.formfill.bucketSize', 1);
           Services.prefs.setIntPref('browser.formfill.maxTimeGroupings', -1);
           Services.prefs.setIntPref('browser.formfill.timeGroupingSize', -1);
           break;
         case 3:
-          Services.prefs.setIntPref('browser.formfill.agedWeight', 0);
-          Services.prefs.setIntPref('browser.formfill.boundaryWeight', 0);
           Services.prefs.setIntPref("browser.formfill.bucketSize", 99999999);
-          Services.prefs.setIntPref('browser.formfill.maxTimeGroupings', -1);
-          Services.prefs.setIntPref('browser.formfill.timeGroupingSize', -1);
+          Services.prefs.clearUserPref('browser.formfill.maxTimeGroupings');
+          Services.prefs.clearUserPref('browser.formfill.timeGroupingSize');
           break;
         default:
+          Services.prefs.clearUserPref('browser.formfill.bucketSize');
+          Services.prefs.clearUserPref('browser.formfill.maxTimeGroupings');
+          Services.prefs.clearUserPref('browser.formfill.timeGroupingSize');
       }
     }
   }
