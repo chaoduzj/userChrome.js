@@ -5,6 +5,7 @@
 // @include      main
 // @async          true
 // @compatibility  Firefox 149
+// @version        2026/09/06 00:00 fix old take 2
 // @version        2026/09/06 00:00 fix old
 // @version        2026/04/02 12:00 Remove deactivation for new search widget
 // @version        2026/01/13 00:00 compatibility 149 from 148
@@ -51,8 +52,8 @@ const sort_Result_SearchBar_History = {
         return results;
       }
     } else {
-      Services.prefs.clearUserPref('browser.formfill.agedWeight');
-      Services.prefs.clearUserPref('browser.formfill.boundaryWeight');
+      Services.prefs.setIntPref('browser.formfill.agedWeight', 0);
+      Services.prefs.setIntPref('browser.formfill.boundaryWeight' ,999);
       switch(this.SORT_ORDER) {
         case 1:
           Services.prefs.setIntPref('browser.formfill.bucketSize', -1);
@@ -70,6 +71,8 @@ const sort_Result_SearchBar_History = {
           Services.prefs.clearUserPref('browser.formfill.timeGroupingSize');
           break;
         default:
+          Services.prefs.clearUserPref('browser.formfill.agedWeight');
+          Services.prefs.clearUserPref('browser.formfill.boundaryWeight');
           Services.prefs.clearUserPref('browser.formfill.bucketSize');
           Services.prefs.clearUserPref('browser.formfill.maxTimeGroupings');
           Services.prefs.clearUserPref('browser.formfill.timeGroupingSize');
