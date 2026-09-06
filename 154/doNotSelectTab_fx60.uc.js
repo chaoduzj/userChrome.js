@@ -5,6 +5,7 @@
 // @include       main
 // @async          true
 // @compatibility Firefox 154
+// @version        2026/09/07 xxx workaround advanceSelectedTab does not work take 2
 // @version        2026/09/07 xxx workaround advanceSelectedTab does not work
 // @version        2026/08/18 Change due to Bug 2039847: Add events for tab interactions
 // @version        2026/01/30 fix bug.
@@ -51,9 +52,12 @@ let do_not_select_tab_when_mousedown = {
           gBrowser.tabContainer.advanceSelectedTab_org(dir, wrap);
         }
       } else {
-        if (dir > 1 && prev == gBrowser.visibleTabs[gBrowser.visibleTabs.length -1]) return;
-        if (dir < 1 && prev == gBrowser.visibleTabs[0]) return;
         gBrowser.tabContainer.advanceSelectedTab_org(dir, wrap, event);
+        if (dir == 1) {
+          if (gBrowser.selectedTab == gBrowser.visibleTabs[gBrowser.visibleTabs.length -1]) return;
+        } else {  
+          if (gBrowser.selectedTab == gBrowser.visibleTabs[0]) return;
+        }
         if (prev == gBrowser.selectedTab) {
           gBrowser.tabContainer.advanceSelectedTab_org(-dir, wrap);
           gBrowser.tabContainer.advanceSelectedTab_org(dir, wrap);
